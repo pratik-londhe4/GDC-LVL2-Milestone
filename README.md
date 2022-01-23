@@ -30,6 +30,8 @@ The route for completed tasks are : https://localhost:8000/completed
 The methods to complete are `render_pending_tasks` and `render_completed_tasks` in the `TasksServer` class
 
 ## For Those who are looking for a challenge!
+#Added /add path that will redirect to a form to create new task
+##do check it out
 
 Our server can only render tasks for now, but we have learned how to use html to create forms that can be used to add new tasks.
 If you are looking for a challenge, create a new page that can add new tasks, delete tasks and complete them. Its okay to fail, All the best!
