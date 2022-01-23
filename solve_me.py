@@ -78,58 +78,56 @@ $ python tasks.py runserver # Starts the tasks management server"""
         )
 
     def add(self, args):
-        if args[0] not in self.current_items.keys():
-            self.current_items[args[0]] = args[1]
-        else:
-            priority = int(args[0])
-            while str(priority) in self.current_items.keys():
-                priority += 1
-            for i in range(priority, int(args[0]), -1):
-                prev = self.current_items.pop(str(i - 1))
-                self.current_items[str(i)] = prev
-            self.current_items[args[0]] = args[1]
+        args[0] = int(args[0])
+        cp = args[0]
+        #print(self.current_items)
+        while cp in self.current_items.keys():
+            self.current_items[-cp] = self.current_items.pop(cp)
+            cp += 1
+        self.current_items[args[0]] = args[0]
+        keys = list(self.current_items.keys())
+        #self.read_current()
+        for i in keys:
+            if i < 0:
+                self.current_items[-i + 1] = self.current_items.pop(i)
+        self.current_items[int(args[0])] = args[1]
         self.write_current()
         print(f'Added task: "{args[1]}" with priority {args[0]}')
 
     def done(self, args):
-        if args[0] in self.current_items.keys():
-            self.completed_items.append(self.current_items.pop(args[0]))
-            self.write_completed()
-            self.write_current()
+        task = self.delete(args)
+        if task:
             print("Marked item as done.")
+            self.completed_items.append(task)
+            self.write_completed()
         else:
             print(f"Error: no incomplete item with priority {args[0]} exists.")
-
+            
     def delete(self, args):
-        if args[0] in self.current_items.keys():
-            self.current_items.pop(args[0])
-            self.write_current()
+        if int(args[0]) in self.current_items.keys():
+            task = self.current_items.pop(int(args[0]))
             print(f"Deleted item with priority {args[0]}")
+            self.write_current()
+            return task
         else:
-            print(
-                f"Error: item with priority {args[0]} does not exist. Nothing deleted."
-            )
+            print(f"Error: item with priority {args[0]} does not exist. Nothing deleted.")
 
     def ls(self):
-        i = 1
-        for key, val in sorted(self.current_items.items()):
-            print(f"{i}. {val} [{key}]")
-            i += 1
+        n = 1
+        for key in sorted(self.current_items.keys()):
+            print(f"{n}. {self.current_items[key]} [{key}]") 
+            n = n +  1
 
     def report(self):
-        print(f"Pending : {len(self.current_items)}")
-        i = 1
-        for k, v in sorted(self.current_items.items()):
-            print(f"{i}. {v} [{k}]")
-            i += 1
+        print("Pending : "+ str(len(self.current_items)))
+        n = 1
+        for key in sorted(self.current_items.keys()):
+            print(f"{n}. {self.current_items[key]} [{key}]") 
+            n = n +  1        
+        print("\nCompleted : " + str(len(self.completed_items)) )
+        for i in range(len(self.completed_items)):
+            print(f"{i+1}. {self.completed_items[i]}" , end="")
 
-        print(f"Completed : {len(self.completed_items)}")
-        i = 1
-        for e in sorted(self.completed_items)[:-1]:
-            print(f"{i}. {e}")
-            i += 1
-        arr = sorted(self.completed_items)
-        print(f"{len(self.completed_items)}. {arr[-1]}", end="")
     
 
     def render_pending_tasks(self):
