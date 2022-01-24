@@ -147,7 +147,6 @@ $ python tasks.py runserver # Starts the tasks management server"""
         self.read_completed()
         style = "font-family:monospace;color:green;font-size:40px"
         output = f"<h1 style={style}>Completed Tasks:</h1><br><h3><ol>"
-        print(self.completed_items)
         for e in sorted(self.completed_items):
             output += f"<li style={li_style}>{e}</li>"
         output += f"</ol></h3><br><a href='/tasks'>Pending Tasks</a>"
